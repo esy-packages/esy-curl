@@ -1,0 +1,53 @@
+{
+  "name": "esy-curl",
+  "version": "7.72.0",
+  "description": "Curl packaged for Esy",
+  "license": "Curl Licence",
+  "source": "https://curl.haxx.se/download/curl-7.72.0.tar.bz2#sha256:ad91970864102a59765e20ce16216efc9d6ad381471f7accceceab7d905703ef",
+  "override": {
+    "buildEnv": {
+      "CFLAGS": "-I#{self.install / 'include'} $CFLAGS",
+      "LDFLAGS": "-L#{self.lib} -lcurl $LDFLAGS"
+    },
+    "build": [
+      "./configure #{os == 'windows' ? '--host x86_64-w64-mingw32': '' } --prefix=$cur__install --disable-debug --disable-dependency-tracking --disable-silent-rules --with-secure-transport --without-ca-bundle --without-ca-path",
+      "make"
+    ],
+    "install": "make install",
+    "buildsInSource": true,
+    "exportedEnv": {
+      "PKG_CONFIG_PATH": {
+        "val": "#{self.lib / 'pkgconfig'}",
+        "scope": "global"
+      },
+      "LDFLAGS": {
+        "scope": "global",
+        "val": "-L#{self.lib} -lpq"
+      },
+      "CPPFLAGS": {
+        "scope": "global",
+        "val": "-I#{self.install / 'include'}"
+      },
+      "LD_LIBRARY_PATH": {
+        "scope": "global",
+        "val": "#{self.lib}:$LD_LIBRARY_PATH"
+      },
+      "LIBRARY_PATH": {
+        "scope": "global",
+        "val": "#{self.lib}:$LIBRARY_PATH"
+      },
+      "CPATH": {
+        "scope": "global",
+        "val": "#{self.install / 'include'}:$CPATH"
+      },
+      "PATH": {
+        "scope": "global",
+        "val": "#{self.bin}:$PATH"
+      }
+    },
+    "dependencies": {
+      "esy-zlib": "esy-packages/esy-zlib",
+      "esy-openssl": "esy-packages/esy-openssl"
+    }
+  }
+}
